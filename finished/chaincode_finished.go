@@ -66,20 +66,10 @@ func (t *SimpleChaincode) Invoke(stub shim.ChaincodeStubInterface, function stri
 		return t.Init(stub, "init", args)
 	} else if function == "write" {
 		return t.write(stub, args)
-	} else if function == "addLoc" {
-		fmt.Println("**** First argument in addLoc:****" + args[0])
-		return t.addLoc(stub, args)
-	} else if function == "updateLocStatus" {
-		fmt.Println("**** First argument in updateLocStatus:****" + args[0])
-		return t.updateLocStatus(stub, args)
-	} else if function == "uploadBol" {
-		fmt.Println("**** First argument in uploadBol:****" + args[0])
-		return t.uploadBol(stub, args)
-	} else if function == "uploadContract" {
-		fmt.Println("**** First argument in uploadContract:****" + args[0])
-		return t.uploadContract(stub, args)
-	}
-	
+	} else if function == "addOutClearFile" {
+		fmt.Println("**** First argument in addOutClearFile:****" + args[0])
+		return t.addOutClearFile(stub, args)
+	} 	
 	fmt.Println("invoke did not find func: " + function)
 
 	return nil, errors.New("Received unknown function invocation")
@@ -92,17 +82,6 @@ func (t *SimpleChaincode) Query(stub shim.ChaincodeStubInterface, function strin
 	// Handle different functions
 	if function == "read" { //read a variable
 		return t.read(stub, args)
-	} else if function == "getLoc" {
-	//	i,err := strconv.Atoi(args[0])
-	//	fmt.Println(err); 
-		return t.getLoc(stub, args);
-		 
-	} else if function == "getList" {
-	
-		return t.getLocList(stub, args);
-	} else if function == "getNumberOfLocs" {
-	
-		return t.getNumberOfLocs(stub, args);
 	} 
 	
 	fmt.Println("query did not find func: " + function)
@@ -132,5 +111,42 @@ func (t *SimpleChaincode) write(stub shim.ChaincodeStubInterface, args []string)
 	
 	
 	return nil, nil
+}
+
+// Adding OutClear files 
+func (t *SimpleChaincode) addOutClearFile(stub shim.ChaincodeStubInterface, args []string) ([]byte,error){
+  var err error;
+  var counter1 int;
+  
+    valAsbytes,err :=stub.GetState(strconv.Itoa(counter))
+    s:=string(valAsbytes);
+	
+     if len(s) != 0 {
+	     lastByByte := s[len(s)-1:]
+             counter1, err =  strconv.Atoi(lastByByte)
+ 		if err != nil {
+     			return  nil,err
+  	         }
+	
+   	  } else {
+             counter1 = 0
+    	   }
+   
+     counter = counter1+1;
+    
+     counter_s := strconv.Itoa(counter)
+     stringvalues = append(args,counter_s)//string array (value)
+     s_requester := counter_s //counter value(key)
+
+     stringByte := strings.Join(stringvalues , "|") // x00 = null
+     
+      err = stub.PutState(s_requester, []byte(stringByte));
+
+      if err != nil {
+		return nil, err
+	}
+	
+   
+                return nil, nil
 }
 
