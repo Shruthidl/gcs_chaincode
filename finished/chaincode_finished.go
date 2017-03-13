@@ -67,9 +67,6 @@ func (t *SimpleChaincode) Invoke(stub shim.ChaincodeStubInterface, function stri
 		return t.Init(stub, "init", args)
 	} else if function == "write" {
 		return t.write(stub, args)
-	} else if function == "addOutClearFile" {
-		fmt.Println("**** First argument in addOutClearFile:****" + args[0])
-		return t.addOutClearFile(stub, args)
 	} 	
 	fmt.Println("invoke did not find func: " + function)
 
@@ -113,73 +110,6 @@ func (t *SimpleChaincode) write(stub shim.ChaincodeStubInterface, args []string)
 	
 	return nil, nil
 }
-
-// Adding OutClear files 
-func (t *SimpleChaincode) addOutClearFile(stub shim.ChaincodeStubInterface, args []string) ([]byte,error){
-  var err error;
-  var counter1 int;
-  
-	
-	// add out clear files
-    valAsbytes,err :=stub.GetState(strconv.Itoa(counter))
-    s:=string(valAsbytes);
-	
-     if len(s) != 0 {
-	     lastByByte := s[len(s)-1:]
-             counter1, err =  strconv.Atoi(lastByByte)
- 		if err != nil {
-     			return  nil,err
-  	         }
-	
-   	  } else {
-             counter1 = 0
-    	   }
-   
-     counter = counter1+1;
-    
-     counter_s := strconv.Itoa(counter)
-     stringvalues = append(args,counter_s)//string array (value)
-     s_requester := counter_s //counter value(key)
-
-     stringByte := strings.Join(stringvalues , "|") // x00 = null
-     
-      err = stub.PutState(s_requester, []byte(stringByte));
-
-      if err != nil {
-		return nil, err
-	}
-	
-     
-	
-               return nil, nil
-}
-	
-  
-	
-   func (t *SimpleChaincode) getCard(stub shim.ChaincodeStubInterface, arg string) ([]byte, error){
-        if(strings.HasPrefix(arg, "364924")){
-           
-		 return []byte("364924"), nil;
-        } else if(strings.HasPrefix(arg, "364914")){
-         
-		 return []byte("364914"), nil;
-        } else if(strings.HasPrefix(arg, "364927")){
-           
-		 return []byte("364927"), nil;
-        }
-       
-	   return []byte("364999"), nil;
-    }
-	
-	 func (t *SimpleChaincode) getStatus(stub shim.ChaincodeStubInterface, arg string) ([]byte, error){
-        if(strings.HasPrefix(arg, "1240")){
-         
-		  return []byte("Validated|20-01-2017 07:20AM"), nil;
-        }
-     
-	     return []byte("Invalid|20-01-2017 07:20AM"), nil;
-    }
-
 
 // read - query function to read key/value pair
 func (t *SimpleChaincode) read(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) {
