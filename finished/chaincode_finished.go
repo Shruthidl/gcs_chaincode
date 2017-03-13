@@ -246,6 +246,8 @@ func (t *SimpleChaincode) addOutClearFile(stub shim.ChaincodeStubInterface, args
 	if err != nil {
 		return nil, err
 		}
+		
+	}
 	
    
                 return []byte(str.String()), nil
