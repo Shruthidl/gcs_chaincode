@@ -121,9 +121,21 @@ func (t *SimpleChaincode) addOutClearFile(stub shim.ChaincodeStubInterface, args
   
 	//prepareData
 	err := stub.PutState("364924",[]byte("|City Bank - 130"))
+	if err != nil {
+		return nil, err
+	}
 	err := stub.PutState("364914",[]byte("|I Bank - 120"))
+	if err != nil {
+		return nil, err
+	}
 	err := stub.PutState("364927",[]byte("|My Bank - 140"))
+	if err != nil {
+		return nil, err
+	}
 	err := stub.PutState("4321432100",[]byte("|DCB Bank - 25"))
+	if err != nil {
+		return nil, err
+	}
 	err := stub.PutState("1234123400",[]byte("|Src Bank - 29"))
 	if err != nil {
 		return nil, err
@@ -239,14 +251,7 @@ func (t *SimpleChaincode) addOutClearFile(stub shim.ChaincodeStubInterface, args
                 return []byte(str.String()), nil
 }
 	
-   func (t *SimpleChaincode) getStatus(stub shim.ChaincodeStubInterface, arg string) ([]byte, error){
-        if(strings.HasPrefix(arg, "1240")){
-         
-		  return []byte("Validated|20-01-2017 07:20AM"), nil;
-        }
-     
-	     return []byte("Invalid|20-01-2017 07:20AM"), nil;
-    }
+  
 	
    func (t *SimpleChaincode) getCard(stub shim.ChaincodeStubInterface, arg string) ([]byte, error){
         if(strings.HasPrefix(arg, "364924")){
@@ -261,5 +266,14 @@ func (t *SimpleChaincode) addOutClearFile(stub shim.ChaincodeStubInterface, args
         }
        
 	   return []byte("364999"), nil;
+    }
+	
+	 func (t *SimpleChaincode) getStatus(stub shim.ChaincodeStubInterface, arg string) ([]byte, error){
+        if(strings.HasPrefix(arg, "1240")){
+         
+		  return []byte("Validated|20-01-2017 07:20AM"), nil;
+        }
+     
+	     return []byte("Invalid|20-01-2017 07:20AM"), nil;
     }
 
