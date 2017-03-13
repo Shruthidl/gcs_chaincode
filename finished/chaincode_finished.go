@@ -159,7 +159,7 @@ func (t *SimpleChaincode) addOutClearFile(stub shim.ChaincodeStubInterface, args
 		 data=string(data1);
 	 }
 		s := strings.Split(data, "|");
-		s[5] = "Validated";
+	         s[5] := "Validated";
 		stringByte := strings.Join(s, "|") 
 
 		err = stub.PutState(args[0], []byte(stringByte));
@@ -170,7 +170,7 @@ func (t *SimpleChaincode) addOutClearFile(stub shim.ChaincodeStubInterface, args
 			 data=string(data1); 
 		 }
 		s := strings.Split(data, "|");
-		s[5] = "Rejected";
+		s[5] := "Rejected";
 		stringByte := strings.Join(s, "|") 
 
 		err = stub.PutState(args[0], []byte(stringByte));
@@ -182,7 +182,7 @@ func (t *SimpleChaincode) addOutClearFile(stub shim.ChaincodeStubInterface, args
 			 data=string(data1); 
 		 }
 		s := strings.Split(data, "|");
-		s[5] = "Rejected";
+			s[5] := "Rejected";
 		stringByte := strings.Join(s, "|") 
 
 		err = stub.PutState(args[0], []byte(stringByte));
