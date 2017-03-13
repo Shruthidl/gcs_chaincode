@@ -32,6 +32,7 @@ var value string ;
 
    
 var counter int = 0;
+var txncounter int = 0;
 var stringvalues []string;
 
 
@@ -118,6 +119,17 @@ func (t *SimpleChaincode) addOutClearFile(stub shim.ChaincodeStubInterface, args
   var err error;
   var counter1 int;
   
+	//prepareData
+	err := stub.PutState("364924",[]byte("|City Bank - 130"))
+	err := stub.PutState("364914",[]byte("|I Bank - 120"))
+	err := stub.PutState("364927",[]byte("|My Bank - 140"))
+	err := stub.PutState("4321432100",[]byte("|DCB Bank - 25"))
+	err := stub.PutState("1234123400",[]byte("|Src Bank - 29"))
+	if err != nil {
+		return nil, err
+	}
+
+	// add out clear files
     valAsbytes,err :=stub.GetState(strconv.Itoa(counter))
     s:=string(valAsbytes);
 	
@@ -146,7 +158,108 @@ func (t *SimpleChaincode) addOutClearFile(stub shim.ChaincodeStubInterface, args
 		return nil, err
 	}
 	
+      value,err :=stub.GetState(strconv.Itoa(counter))
+		if err != nil {
+		return nil, err
+	}
+	
+	 for i, data1 := range bytes.Split(value, []byte{0}) { //split by white space
+		fmt.Printf("Index%d :  %s\n", i, string(data1));
+		 data=string(data1);
+	 }
+		s := strings.Split(data, "|");
+		s[5] = "Validated";
+		stringByte := strings.Join(s, "|") 
+
+		err = stub.PutState(args[0], []byte(stringByte));
+		 
+	if(!strings.HasPrefix(args[6] , "H-")){
+		 for i, data1 := range bytes.Split(value, []byte{0}) { //split by white space
+			fmt.Printf("Index%d :  %s\n", i, string(data1));
+			 data=string(data1); 
+		 }
+		s := strings.Split(data, "|");
+		s[5] = "Rejected";
+		stringByte := strings.Join(s, "|") 
+
+		err = stub.PutState(args[0], []byte(stringByte));
+	}
+		
+		if(!strings.HasPrefix(args[6] , "T-")){
+		 for i, data1 := range bytes.Split(value, []byte{0}) { //split by white space
+			fmt.Printf("Index%d :  %s\n", i, string(data1));
+			 data=string(data1); 
+		 }
+		s := strings.Split(data, "|");
+		s[5] = "Rejected";
+		stringByte := strings.Join(s, "|") 
+
+		err = stub.PutState(args[0], []byte(stringByte));
+	}
+	
+	 if(strings.HasPrefix(s[5], "Rejected")){
+            // Do not add transaction since the file is rejected
+            // else the transaction would be considered for generating inclear files
+
+             fmt.Println(s[5]);
+            return []byte(counter), nil;
+        }
+	
+	s1 := strings.Split(arg[6], ",");
+	
+	for i := 0; i < len(s1); i++ {
+	txncounter = txncounter + 1;
+	 fmt.Println(s1[i]);
+	 content:=strings.Split(s1[i],"|")  
+         var str bytes.Buffer;
+		
+	  str.WriteString(strconv.Itoa(txncounter));
+          fmt.Println(str);
+          str.WriteString("|");
+          str.WriteString(strconv.Itoa(counter));
+          str.WriteString("|");
+          str.WriteString(s1[i]);	
+	var status = getStatus(content[0]);
+	 fmt.Println(status);
+	var card = getCard(content[1]);
+        fmt.Println(card);
+        str.WriteString(stub.GetState(card));
+	str.WriteString(content[4]);
+	str.WriteString("|0.25|");
+	
+	str.WriteString(status);
+		
+		err = stub.PutState(txncounter, []byte(str.String()));	
+	     
+	if err != nil {
+		return nil, err
+		}
+	
    
-                return nil, nil
+                return []byte(str.String()), nil
 }
+	
+   func (t *SimpleChaincode) getStatus(stub shim.ChaincodeStubInterface, arg string) ([]byte, error){
+        if(strings.HasPrefix(arg, "1240")){
+         
+		  return []byte("Validated|20-01-2017 07:20AM"), nil;
+        }
+     
+	     return []byte("Invalid|20-01-2017 07:20AM"), nil;
+    }
+	
+   func (t *SimpleChaincode) getCard(stub shim.ChaincodeStubInterface, arg string) ([]byte, error){
+        if(strings.HasPrefix(arg, "364924")){
+           
+		 return []byte("364924"), nil;
+        } else if(strings.HasPrefix(arg, "364914")){
+         
+		 return []byte("364914"), nil;
+        } else if(strings.HasPrefix(arg, "364927")){
+           
+		 return []byte("364927"), nil;
+        }
+       
+	   return []byte("364999"), nil;
+    }
 
