@@ -149,52 +149,7 @@ func (t *SimpleChaincode) addOutClearFile(stub shim.ChaincodeStubInterface, args
 		return nil, err
 	}
 	
-      value,err :=stub.GetState(strconv.Itoa(counter))
-		if err != nil {
-		return nil, err
-	}
-	
-	 for i, data1 := range bytes.Split(value, []byte{0}) { //split by white space
-		fmt.Printf("Index%d :  %s\n", i, string(data1));
-		 data=string(data1);
-	 }
-		s := strings.Split(data, "|");
-	         s[5] := "Validated";
-		stringByte := strings.Join(s, "|") 
-
-		err = stub.PutState(args[0], []byte(stringByte));
-		 
-	if(!strings.HasPrefix(args[6] , "H-")){
-		 for i, data1 := range bytes.Split(value, []byte{0}) { //split by white space
-			fmt.Printf("Index%d :  %s\n", i, string(data1));
-			 data=string(data1); 
-		 }
-		s := strings.Split(data, "|");
-		s[5] := "Rejected";
-		stringByte := strings.Join(s, "|") 
-
-		err = stub.PutState(args[0], []byte(stringByte));
-	}
-		
-		if(!strings.HasPrefix(args[6] , "T-")){
-		 for i, data1 := range bytes.Split(value, []byte{0}) { //split by white space
-			fmt.Printf("Index%d :  %s\n", i, string(data1));
-			 data=string(data1); 
-		 }
-		s := strings.Split(data, "|");
-			s[5] := "Rejected";
-		stringByte := strings.Join(s, "|") 
-
-		err = stub.PutState(args[0], []byte(stringByte));
-	}
-	
-	 if(strings.HasPrefix(s[5], "Rejected")){
-            // Do not add transaction since the file is rejected
-            // else the transaction would be considered for generating inclear files
-
-             fmt.Println(s[5]);
-            return nil, nil;
-        }
+     
 	
                return nil, nil
 }
