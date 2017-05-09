@@ -18,7 +18,6 @@ under the License.
 package main
 
 import (
-	"encoding/json"
 	"fmt"
 	"strconv"
 	"strings"
